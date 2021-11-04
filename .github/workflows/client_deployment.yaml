@@ -1,0 +1,19 @@
+name: "Client Deployment"
+on:
+  push:
+    branches:
+      - master
+      - devops
+jobs:
+  deployment:
+    name: Build client Project
+    runs-on: ubuntu-latest
+    container: node:16-alpine3.13
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install all dependencies
+        run: npm i
+        working-directory: client
+      - name: Build client application
+        run: npm run build
+        working-directory: client

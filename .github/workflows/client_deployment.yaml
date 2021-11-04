@@ -17,3 +17,23 @@ jobs:
       - name: Build client application
         run: npm run build
         working-directory: client
+
+      - name: Copy repository contents via scp
+        uses: appleboy/scp-action@master
+        env:
+          HOST: ${{ secrets.DEP_HOST }}
+          USERNAME: ${{ secrets.DEP_USERNAME }}
+          PORT: ${{ secrets.DEP_PORT }}
+          KEY: ${{ secrets.DEP_SSH }}
+        with:
+          source: "./client/build"
+          target: "/lab/hawk/server"
+
+        - name: Executing remote command
+          uses: appleboy/ssh-action@master
+          with:
+            host: ${{ secrets.DEP_HOST }}
+            USERNAME: ${{ secrets.DEP_USERNAME }}
+            PORT: ${{ secrets.DEP_PORT }}
+            KEY: ${{ secrets.DEP_SSH }}
+            script: ls -l /lab/hawk/server

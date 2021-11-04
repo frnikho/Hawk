@@ -28,12 +28,11 @@ jobs:
         with:
           source: "./client/build"
           target: "/lab/hawk/server"
-
-        - name: Executing remote command
-          uses: appleboy/ssh-action@master
-          with:
-            host: ${{ secrets.DEP_HOST }}
-            USERNAME: ${{ secrets.DEP_USERNAME }}
-            PORT: ${{ secrets.DEP_PORT }}
-            KEY: ${{ secrets.DEP_SSH }}
-            script: ls -l /lab/hawk/server
+      - name: Executing remote command
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.DEP_HOST }}
+          USERNAME: ${{ secrets.DEP_USERNAME }}
+          PORT: ${{ secrets.DEP_PORT }}
+          KEY: ${{ secrets.DEP_SSH }}
+          script: ls -l /lab/hawk/server

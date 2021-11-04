@@ -15,7 +15,6 @@ jobs:
         run: npm i
         working-directory: server
       - name: Create env file
-        working-directory: server
         run: |
           touch .env
           echo DB_HOST =${{ secrets.DB_HOST }} >> .env
@@ -23,6 +22,7 @@ jobs:
           echo DB_PASSWORD =${{ secrets.DB_PASSWORD }} >> .env
           echo DB_PORT =${{ secrets.DB_PORT }} >> .env
           echo DB_DATABASE =${{ secrets.DB_DATABASE }} >> .env
+        working-directory: server
       - name: Copy repository contents via scp
         uses: appleboy/scp-action@master
         env:
@@ -31,8 +31,7 @@ jobs:
           PORT: ${{ secrets.DEP_PORT }}
           KEY: ${{ secrets.DEP_SSH }}
         with:
-          source: "./server/"
-
+          source: "./server/, ./server/.env"
           target: "/lab/hawk"
       - name: Executing remote command
         uses: appleboy/ssh-action@master

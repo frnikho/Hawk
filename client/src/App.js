@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from "react";
+import {React, useState, useEffect} from "react";
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import { Home } from "./components";
 import socketIOClient from "socket.io-client";
-import MainPage from "./MainPage";
 const ENDPOINT = "http://127.0.0.1:4001";
 
 function App() {
@@ -20,7 +21,13 @@ function App() {
   });
 
   return (
-      <MainPage/>
+    <div className="App">
+      <Router>
+        <Routes>
+          <Route path="/" exact element={<Home/>}/>
+        </Routes>
+      </Router>
+    </div>
   );
 }
 

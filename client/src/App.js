@@ -8,7 +8,7 @@ function App() {
 
   const [response, setResponse] = useState("");
 
-  useEffect(() => {
+  useEffect((props) => {
     const socket = socketIOClient(ENDPOINT);
 
     socket.emit("join_room", {

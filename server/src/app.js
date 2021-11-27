@@ -1,26 +1,30 @@
 const express = require("express");
 const http = require("http");
-const socketIo = require("socket.io");
 
 const dotenv = require('dotenv');
 dotenv.config();
 
 const port = process.env.PORT || 4001;
 const index = require("./routes/index");
-const {controlSocket} = require("./controllers/SocketController");
+const roomSocketController = require('./controllers/sockets/RoomSocketController.js');
 
 const app = express();
 app.use(index);
 
 const server = http.createServer(app);
-const io = new socketIo.Server(server, {
+
+const io = require("socket.io")(server, {
     cors: {
-        origin: '*'
+        origin: "*",
     }
 });
 
-controlSocket(io);
 
+const onConnection = (socket) => {
+    roomSocketController(io, socket);
+}
+
+io.on("connection", onConnection);
 
 
 server.listen(port, () => console.log(`Listening on port ${port}`));

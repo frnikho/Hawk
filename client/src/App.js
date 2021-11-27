@@ -10,9 +10,24 @@ function App() {
   useEffect((props) => {
     const socket = socketIOClient(ENDPOINT);
 
-    socket.emit("join_room", {
-      code: "79AB"
+    socket.on("room:error:join", (msg) => {
+      console.log(msg);
+    })
+
+    socket.on("room:success:create", (msg) => {
+      console.log(msg);
     });
+
+    socket.on("room:error:create", (msg) => {
+      console.log(msg);
+      setResponse(msg);
+    })
+
+    socket.on("room:success:join", (msg) => {
+      console.log(msg);
+    });
+
+    socket.emit("room:create");
 
     socket.on("message", data => {
       setResponse(data);

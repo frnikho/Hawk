@@ -1,6 +1,9 @@
 import React from "react";
-import {Router} from "@mui/icons-material";
-import {Route, Routes} from "react-router-dom";
+import {
+    BrowserRouter,
+    Routes,
+    Route
+} from "react-router-dom";
 import {Home} from "./home";
 import {Lobby} from "./lobby";
 
@@ -26,12 +29,12 @@ export default class App extends React.Component {
         return (
             <div className="App">
                 <SocketContext.Provider value={this.state.socket}>
-                    <Router>
+                    <BrowserRouter>
                         <Routes>
                             <Route path="/" exact element={<Home/>}/>
                             <Route path="/lobby/:code" exact element={<Lobby/>}/>
                         </Routes>
-                    </Router>
+                    </BrowserRouter>
                 </SocketContext.Provider>
             </div>
         );

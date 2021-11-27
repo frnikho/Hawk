@@ -1,20 +1,38 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
+import {Router} from "@mui/icons-material";
+import {Route, Routes} from "react-router-dom";
+import {Home} from "./home";
+import {Lobby} from "./lobby";
+
 import socketIOClient from "socket.io-client";
-import MainPage from "./MainPage";
+import SocketContext from "./components/SocketContext";
+
 const ENDPOINT = "http://127.0.0.1:4001";
 
-function App() {
-
 export default class App extends React.Component {
+
+    constructor(props) {
+        super(props);
+        this.state = {
+            socket: undefined
+        }
+    }
+
+    componentDidMount() {
+        this.setState({socket: socketIOClient(ENDPOINT)})
+    }
+
     render() {
         return (
             <div className="App">
-                <Router>
-                    <Routes>
-                        <Route path="/" exact element={<Home/>}/>
-                        <Route path="/lobby/:code" exact element={<Lobby/>}/>
-                    </Routes>
-                </Router>
+                <SocketContext.Provider value={this.state.socket}>
+                    <Router>
+                        <Routes>
+                            <Route path="/" exact element={<Home/>}/>
+                            <Route path="/lobby/:code" exact element={<Lobby/>}/>
+                        </Routes>
+                    </Router>
+                </SocketContext.Provider>
             </div>
         );
     }

@@ -8,8 +8,17 @@ import Box from '@mui/material/Box';
 import theme from '../theme'
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
+import SocketContext from "../components/SocketContext";
 
 class Home extends React.Component {
+
+    static contextType = SocketContext
+
+    componentDidMount() {
+        console.log("ABCD")
+        console.log(Home.contextType);
+    }
+
     // const [username, setUsername] = useState("");
     //
     // function onJoinRoom(e) {

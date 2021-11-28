@@ -21,10 +21,17 @@ const io = require("socket.io")(server, {
 
 
 const onConnection = (socket) => {
+    socket.on("disconnect", onDisconnect);
+    console.log("New connection: " + socket.id);
     roomSocketController(io, socket);
 }
 
+const onDisconnect = (socket) => {
+    console.log("Disconnected");
+}
+
 io.on("connection", onConnection);
+
 
 
 server.listen(port, () => console.log(`Listening on port ${port}`));

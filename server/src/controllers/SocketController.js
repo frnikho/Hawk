@@ -1,4 +1,4 @@
-const Room = require("../data/Room");
+const Room = require("../managers/RoomManager");
 const User = require("../data/User");
 const rooms = [];
 

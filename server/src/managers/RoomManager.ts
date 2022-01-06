@@ -1,5 +1,4 @@
 import Room from "../data/Room";
-import User from "../data/User";
 
 export default class RoomManager {
 

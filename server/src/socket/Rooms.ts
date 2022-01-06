@@ -79,6 +79,7 @@ export default class Rooms {
                 let room = this.manager.getRoomByCode(data['roomCode']);
                 room.addUser(new User(data['username'], socket.id));
                 this.io.emit(room.code, room);  // EMIT UPDATE TO ROOM CLIENT
+                socket.join(room.code); // JOIN SOCKETIO ROOM
                 return this.roomJoined(socket, room);
             } else {
                 return this.roomCannotBeJoined(socket, "Invalid room code !");

@@ -4,6 +4,7 @@ import {Home} from "./home";
 import {Lobby} from "./lobby";
 
 import {SocketContext, socket} from "./context/SocketContext";
+import {Game} from "./game";
 
 export default class App extends React.Component {
 
@@ -14,6 +15,7 @@ export default class App extends React.Component {
                     <Routes>
                         <Route path="/" element={<Home/>}/>
                         <Route path="/lobby/:code" exact element={<Lobby/>}/>
+                        <Route path="/game/:code" exact element={<Game/>}/>
                     </Routes>
                 </SocketContext.Provider>
             </div>

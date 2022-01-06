@@ -16,6 +16,7 @@ class Lobby extends React.Component {
             redirect: false,
             room: undefined,
         }
+        this.startGame = this.startGame.bind(this);
     }
 
     componentDidMount() {
@@ -59,13 +60,18 @@ class Lobby extends React.Component {
         )
     }
 
+    startGame = () => {
+        let socket = this.context;
+        socket.emit('room:game:start');
+    }
+
     showControls = () => {
         if (this.state.room === undefined || this.state.room._users === undefined)
             return;
         let socket = this.context;
 
         if (this.state.room._users[0]._socketId === socket.id)
-            return <Button variant={"outlined"}>Start</Button>
+            return <Button variant={"outlined"} onClick={this.startGame}>Start</Button>
     }
 
     render() {

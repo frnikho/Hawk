@@ -24,6 +24,17 @@ export default class Rooms {
         socket.on("room:leave", (data) => this.leaveRoom(socket, data));
         socket.on("room:delete", (data) => this.deleteRoom(socket, data));
         socket.on("room:info:get", (data) => this.getRoomInformation(socket, data));
+        socket.on("room:game:start", (data) => this.startRoom(socket, data));
+    }
+
+    private startRoom(socket: io.Socket, data: JSON) {
+        try {
+            let room: Room = this.manager.getRoomByCode(data['roomCode']);
+            room.start();
+            this.io.emit(room.code, room);
+        } catch (ex: any) {
+            return this.roomCannotBeStarted(socket, "Cannot started room.");
+        }
     }
 
     private createRoom(socket: io.Socket, data: JSON) {
@@ -38,7 +49,7 @@ export default class Rooms {
                 return this.roomCannotBeCreated(socket, "Cannot created room, please try again later !");
             }
         } catch (ex: any) {
-            return this.roomCannotBeCreated(socket, "An error occurred, please try again later !");
+            return this.roomCannotBeCreated(socket, ex.message);
         }
     }
 
@@ -67,6 +78,12 @@ export default class Rooms {
 
     private roomCannotBeJoined(socket: io.Socket, message: string): void {
         socket.emit("room:join:error", {
+            message
+        })
+    }
+
+    private roomCannotBeStarted(socket: io.Socket, message: string): void {
+        socket.emit('room:start:error', {
             message
         })
     }

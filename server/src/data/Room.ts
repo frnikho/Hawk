@@ -22,7 +22,6 @@ export default class Room {
         if (this.userAlreadyExists(user))
             throw new Error("User is already in this room");
             this._users.push(user);
-            this.start();
     }
 
     public userAlreadyExists(user: User): boolean {

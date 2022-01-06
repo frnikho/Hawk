@@ -30,9 +30,13 @@ export default class Rooms {
     private startRoom(socket: io.Socket, data: JSON) {
         try {
             let room: Room = this.manager.getRoomByCode(data['roomCode']);
+
             room.start();
-            this.io.emit(room.code, room);
+            this.io.to(room.code).emit('room:started');
+            console.log(room.code);
+            /*this.io.emit(room.code, room);*/
         } catch (ex: any) {
+            console.log(ex);
             return this.roomCannotBeStarted(socket, "Cannot started room.");
         }
     }

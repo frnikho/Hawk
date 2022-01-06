@@ -23,6 +23,9 @@ export default class QuestionManager {
         try {
             query.forEach((element) => {
                 let question: Question = new Question(element.title, element.answers, element.answer, element.image_url, element.difficulty);
+
+                console.log(question);
+
                 this.addQuestion(question);
             })
         } catch (e: any) {

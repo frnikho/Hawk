@@ -32,6 +32,10 @@ class Lobby extends React.Component {
             console.log("INFO", data);
         })
 
+        socket.on('room:started', () => {
+           console.log("HELLO game has started");
+        });
+
         socket.emit("room:info:get", {roomCode: this.props.params.code});
     }
 
@@ -62,7 +66,10 @@ class Lobby extends React.Component {
 
     startGame = () => {
         let socket = this.context;
-        socket.emit('room:game:start');
+        console.log("ABCD");
+        socket.emit('room:game:start', {
+            roomCode: this.props.params.code
+        });
     }
 
     showControls = () => {

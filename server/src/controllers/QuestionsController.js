@@ -34,4 +34,12 @@ const getRandomQuestion = (callback) => {
     })
 }
 
-module.exports = {getQuestionByUuid, getQuestionsByDifficulty, getQuestionAnswerByUuid}
+function getAllQuestions(callback) {
+    db.getConnection().then((con) => {
+        con.query('SELECT * from questions').then((rows) => {
+            callback(rows)
+        })
+    })
+}
+
+module.exports = {getQuestionByUuid, getQuestionsByDifficulty, getQuestionAnswerByUuid, getRandomQuestion, getAllQuestions};

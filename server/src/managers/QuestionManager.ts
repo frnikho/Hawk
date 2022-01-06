@@ -19,6 +19,17 @@ export default class QuestionManager {
         return true;
     }
 
+    public addQuestionsFromQuery(query): void {
+        try {
+            query.forEach((element) => {
+                let question: Question = new Question(element.title, element.answers, element.answer, element.image_url, element.difficulty);
+                this.addQuestion(question);
+            })
+        } catch (e: any) {
+            throw new Error(e);
+        }
+    }
+
     public getQuestionByIndex(index: number): Question | undefined {
         if (index < 0 || index >= this._questions.length)
             return undefined;
@@ -38,5 +49,9 @@ export default class QuestionManager {
 
     public getQuestions(): Question[] {
         return this._questions;
+    }
+
+    public isQuestionsLoaded(): boolean {
+        return (this._questions.length > 0 ? true : false);
     }
 }

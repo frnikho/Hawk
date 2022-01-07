@@ -1,6 +1,6 @@
 import Room from "./Room";
 import QuestionManager from "../managers/QuestionManager";
-import {getAllQuestions, getRandomQuestions} from "../repository/QuestionRepository";
+import {getRandomQuestions} from "../repository/QuestionRepository";
 import Question from "./Question";
 
 export enum GameState {
@@ -10,7 +10,7 @@ export enum GameState {
     PODIUM,
 }
 
-const STARTING_COUNTDOWN: number = 30;
+const STARTING_COUNTDOWN: number = 5;
 const ANSWER_COUNTDOWN: number = 15;
 const RESPONSE_COUNTDOWN: number = 10;
 
@@ -56,8 +56,8 @@ export default class Game {
         }
         let question: Question | undefined = Question.fromJSON(this.questions.getCurrentQuestion());
         if (question instanceof Question) {
-            console.log(typeof question);
             data['question'] = question.toJSON();
+            data['users'] = this.room.users;
         }
         socket.emit('game:update', data);
     }

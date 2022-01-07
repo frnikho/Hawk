@@ -8,7 +8,6 @@ export default class Room {
 
     private _code: short.SUUID;
     private _users: User[];
-    private _maxUsers = MAX_USERS;
     private _game: Game;
 
     constructor() {
@@ -23,6 +22,9 @@ export default class Room {
     }
 
     public userAlreadyExists(user: User): boolean {
+        this._users.some((u)=>u.socket.id === user.socket.id);
+
+
         for (let u of this._users) {
             if (u.socket.id === user.socket.id)
                 return true;
@@ -44,10 +46,6 @@ export default class Room {
 
     get code(): short.SUUID {
         return this._code;
-    }
-
-    get maxUsers(): number {
-        return this._maxUsers;
     }
 
     public toJSON(): object {

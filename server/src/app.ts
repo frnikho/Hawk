@@ -3,14 +3,17 @@ import {Express} from "express";
 const express = require('express');
 const dotenv = require('dotenv');
 import http = require("http");
-import Game from "./socket/Game";
+import * as io from 'socket.io';
+import RoomSocket from "./socket/RoomSocket";
+import RoomManager from "./managers/RoomManager";
 const cors = require('cors');
 const DEFAULT_PORT = 4001;
 
-class App {
+export default class App {
 
     private port: number;
-    private game: Game;
+    private readonly io: io.Server;
+    private static roomSocket: RoomSocket;
     private readonly server: http.Server;
     private readonly app: Express;
 
@@ -20,7 +23,21 @@ class App {
         this.app = express();
         this.server = http.createServer(this.app);
         this.loadMiddlewares();
-        this.game = new Game(this.server);
+        this.io = require('socket.io')(this.server, {
+            cors: {
+                origin: "*"
+            }
+        })
+        App.roomSocket = new RoomSocket(this.io);
+        this.initializeSocketRoute();
+    }
+
+    public initializeSocketRoute() {
+        this.io.on("connection", this.onConnection);
+    }
+
+    private onConnection(socket: io.Socket) {
+        App.roomSocket.initializeSocketRoute(socket);
     }
 
     private initConfig(): void {
@@ -47,6 +64,10 @@ class App {
 
     public stop(): void {
 
+    }
+
+    public static getRoomManager(): RoomManager {
+        return App.roomSocket.roomManager;
     }
 }
 

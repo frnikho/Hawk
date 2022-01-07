@@ -1,20 +1,31 @@
+import * as io from 'socket.io';
+
 export default class User {
 
-    private _username: string;
-    private _socketId: string;
+    private readonly _username: string;
+    private readonly _socket: io.Socket;
+    private readonly _socketId: string;
 
-    constructor(username: string, socketId: string) {
-        if (username === undefined || socketId === undefined)
-            throw new TypeError("Username or socketId cannot be null !");
+    constructor(username: string, socket: io.Socket) {
+        if (username === undefined || socket === undefined)
+            throw new TypeError("Username or socket cannot be null !");
         this._username = username;
-        this._socketId = socketId;
+        this._socket = socket;
+        this._socketId = this._socket.id;
     }
 
     get username(): string {
         return this.username;
     }
 
-    get socketId(): string {
-        return this._socketId;
+    get socket(): io.Socket {
+        return this._socket;
+    }
+
+    public toJSON(): object {
+        return {
+            username: this._username,
+            socketId: this._socketId
+        }
     }
 }

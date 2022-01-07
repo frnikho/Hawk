@@ -1,7 +1,6 @@
 import User from "./User";
 import * as short from 'short-uuid';
-import QuestionManager from "../managers/QuestionManager";
-const {getAllQuestions} = require('../repository/QuestionRepository')
+import Game from "./Game";
 
 const MAX_USERS: number = 10;
 
@@ -10,12 +9,11 @@ export default class Room {
     private _code: short.SUUID;
     private _users: User[];
     private _maxUsers = MAX_USERS;
-    private _questionManager: QuestionManager;
+    private _game: Game;
 
     constructor() {
         this._code = short.generate();
         this._users = [];
-        this._questionManager = new QuestionManager();
     }
 
     public addUser(user: User): void {
@@ -26,16 +24,18 @@ export default class Room {
 
     public userAlreadyExists(user: User): boolean {
         for (let u of this._users) {
-            if (u.socketId === user.socketId)
+            if (u.socket.id === user.socket.id)
                 return true;
         }
         return false;
     }
 
     public start(): void {
-        getAllQuestions((data) => {
-            this._questionManager.addQuestionsFromQuery(data);
-        });
+        this._game.start();
+    }
+
+    public setGame(game: Game): void {
+        this._game = game;
     }
 
     get users(): User[] {
@@ -48,5 +48,14 @@ export default class Room {
 
     get maxUsers(): number {
         return this._maxUsers;
+    }
+
+    public toJSON(): object {
+        return {
+            code: this._code,
+            users: this._users.map((user) => user.toJSON()),
+            game: this._game
+
+        }
     }
 }

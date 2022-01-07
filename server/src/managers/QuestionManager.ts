@@ -2,7 +2,7 @@ import Question from "../data/Question";
 
 export default class QuestionManager {
 
-    private _questions: Question[];
+    private readonly _questions: Question[];
     private _currentQuestionsIndex: number;
 
     constructor() {
@@ -40,14 +40,14 @@ export default class QuestionManager {
     }
 
     public getCurrentQuestion(): Question | undefined {
-        return this.getQuestionByIndex(this._currentQuestionsIndex);
+        return this._questions[this._currentQuestionsIndex];
     }
 
-    public nextQuestion(): boolean {
+    public nextQuestion(): Question | undefined {
         if (this._currentQuestionsIndex + 1 >= this._questions.length)
-            return false;
+            return undefined;
         this._currentQuestionsIndex++;
-        return true;
+        return this._questions[this._currentQuestionsIndex];
     }
 
     public getQuestions(): Question[] {

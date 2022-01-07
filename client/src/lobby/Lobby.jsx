@@ -14,6 +14,7 @@ class Lobby extends React.Component {
         super(props);
         this.state = {
             redirect: false,
+            redirectUrl: undefined,
             room: undefined,
         }
         this.startGame = this.startGame.bind(this);
@@ -33,7 +34,10 @@ class Lobby extends React.Component {
         })
 
         socket.on('room:started', () => {
-           console.log("HELLO game has started");
+            this.setState({
+                redirect: true,
+                redirectUrl: '/game/' + this.props.params.code,
+            })
         });
 
         socket.emit("room:info:get", {roomCode: this.props.params.code});
@@ -48,17 +52,18 @@ class Lobby extends React.Component {
         let socket = this.context
         socket.emit("room:leave");
         this.setState({
-            redirect: true
+            redirect: true,
+            redirectUrl: '/'
         })
     }
 
     showUsers = () => {
-        if (this.state.room === undefined || this.state.room._users === undefined)
+        if (this.state.room === undefined || this.state.room?.users === undefined)
             return;
         return (
-            this.state.room._users.map((user, index) => {
+            this.state.room.users.map((user, index) => {
                 return (<Grid item key={index}>
-                    <h1 key={index}>{user._username}</h1>
+                    <h1 key={index}>{user.username}</h1>
                 </Grid>)
             })
         )
@@ -73,11 +78,16 @@ class Lobby extends React.Component {
     }
 
     showControls = () => {
-        if (this.state.room === undefined || this.state.room._users === undefined)
+        if (this.state.room === undefined || this.state.room.users === undefined)
             return;
         let socket = this.context;
 
-        if (this.state.room._users[0]._socketId === socket.id)
+        console.log(this.state.room.users[0].socketId);
+        console.log(socket.id);
+
+        console.log(this.state.room.users[0]);
+
+        if (this.state.room.users[0].socketId === socket.id)
             return <Button variant={"outlined"} onClick={this.startGame}>Start</Button>
     }
 
@@ -85,7 +95,7 @@ class Lobby extends React.Component {
         return (
             <div>
                 <AppBar style={{ background: 'transparent', boxShadow: 'none'}} position="static">
-                    {this.state.redirect ? <Navigate to={"/"}/> : null}
+                    {this.state.redirect ? <Navigate to={this.state.redirectUrl}/> : null}
                     <Toolbar>
                         <IconButton
                             size="large"

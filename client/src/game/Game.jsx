@@ -66,7 +66,7 @@ class Game extends React.Component {
         })
 
         this.socket.on('game:update', this.onUpdate);
-        this.socket.emit('game:update:get');
+        this.socket.emit('game:update:get', {hello: "world"});
     }
 
     onUpdate(data) {
@@ -84,7 +84,7 @@ class Game extends React.Component {
 
         return (
             <Grid container spacing={2}>
-                {this.state.users.map((user) => <UserCardComponent user={user}/>)}
+                {this.state.users.map((user, index) => <UserCardComponent key={index} user={user}/>)}
             </Grid>
         )
     }

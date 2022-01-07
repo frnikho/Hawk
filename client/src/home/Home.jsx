@@ -40,10 +40,10 @@ class Home extends React.Component {
             console.log(msg);
         })
         socket.on("room:create:success", data => {
-            this.setState({lobbyId: data.room._code, redirectToLobby: true});
+            this.setState({lobbyId: data.room.code, redirectToLobby: true});
         })
         socket.on("room:join:success", data => {
-            this.setState({lobbyId: data.room._code, redirectToLobby: true});
+            this.setState({lobbyId: data.room.code, redirectToLobby: true});
         })
     }
 

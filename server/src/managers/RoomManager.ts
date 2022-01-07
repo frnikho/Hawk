@@ -2,15 +2,15 @@ import Room from "../data/Room";
 
 export default class RoomManager {
 
-    private _rooms: Room[];
+    private static _rooms: Room[];
 
     constructor() {
-        this._rooms = [];
+        RoomManager._rooms = [];
     }
 
     public addRoom(room: Room): boolean {
         try {
-            this._rooms.push(room);
+            RoomManager._rooms.push(room);
         } catch (ex: any) {
             return false;
         }
@@ -18,9 +18,9 @@ export default class RoomManager {
     }
     
     public removeUserBySocketId(socketId: string): void {
-        for (let room of this._rooms) {
+        for (let room of RoomManager._rooms) {
             for (let i = 0; i < room.users.length; i++) {
-                if (room.users[i].socketId === socketId) {
+                if (room.users[i].socket.id === socketId) {
                     room.users.splice(i, 1);
                     return;
                 }
@@ -29,7 +29,7 @@ export default class RoomManager {
     }
 
     public checkRoomExists(room: Room): boolean {
-        for (let r of this._rooms) {
+        for (let r of RoomManager._rooms) {
             if (r.code === room.code)
                 return true;
         }
@@ -38,25 +38,19 @@ export default class RoomManager {
     public checkRoomExistsByCode(code: string): boolean {
         if (code === undefined)
             return false;
-        for (let r of this._rooms) {
+        for (let r of RoomManager._rooms) {
             if (r.code === code)
                 return true;
         }
         return false;
     }
 
-    public getRoomByUserSocket(socketId: string): Room | undefined {
-        for (let room of this._rooms) {
-            for (let user of room.users) {
-                if (user.socketId === socketId)
-                    return room;
-            }
-        }
-        return undefined;
+    public getRoomByUserSocket(socketId: string): Room[] | undefined {
+        return RoomManager._rooms.filter((room)=>room.users.find((user)=>user.socket.id === socketId));
     }
 
     public getRoomByCode(code: string): Room | undefined {
-        for (let room of this._rooms) {
+        for (let room of RoomManager._rooms) {
             if (room.code === code)
                 return room;
         }

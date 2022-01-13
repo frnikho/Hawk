@@ -5,6 +5,7 @@ import {Grid} from "@mui/material";
 import AnswerCardComponent from "../components/AnswerCardComponent";
 import UserCardComponent from "../components/UserCardComponent";
 import GameStart from "./GameStart";
+import Box from "@mui/material/Box";
 
 class Game extends React.Component {
 
@@ -16,16 +17,23 @@ class Game extends React.Component {
             players: undefined,
             question: undefined,
             state: undefined,
-            countdown: 0
+            countdown: 0,
+            answered: undefined,
         }
         this.onClickAnswerCard = this.onClickAnswerCard.bind(this);
         this.onUpdate = this.onUpdate.bind(this);
+        this.onUpdateUsers = this.onUpdateUsers.bind(this);
     }
 
     componentDidMount() {
         this.socket = this.context;
         this.socket.on('game:update', this.onUpdate);
+        this.socket.on('game:update:users', this.onUpdateUsers)
         this.socket.emit('game:update:get', {hello: "world"});
+    }
+
+    onUpdateUsers(data) {
+
     }
 
     onUpdate(data) {
@@ -37,9 +45,15 @@ class Game extends React.Component {
         });
     }
 
-    onClickAnswerCard(answer) {
-        console.log(answer);
-        this.socket.emit('game:answer');
+    onClickAnswerCard(answer, index) {
+        const data = {
+            answer,
+            index
+        }
+        this.socket.emit('game:answer', data);
+        this.setState({
+            answered: index,
+        })
     }
 
     showUsers() {
@@ -58,11 +72,9 @@ class Game extends React.Component {
             return;
 
         let abc = JSON.parse(this.state.question.answers);
-        console.log(abc);
-
         return (
             <Grid container spacing={6} alignContent={"center"} textAlign={"center"}>
-                {abc.map((answer) => <AnswerCardComponent answer={answer} onClick={this.onClickAnswerCard}/>)}
+                {abc.map((answer, index) => <AnswerCardComponent answered={this.state.answered} key={index} answer={answer} onClick={() => this.onClickAnswerCard(answer, index)}/>)}
             </Grid>
         )
     }
@@ -70,9 +82,11 @@ class Game extends React.Component {
     showHeaders() {
         let data = [];
         if (this.state.question !== undefined)
-            data.push(<h1>{this.state.question.title}</h1>);
+            data.push(<h1 key={0}>{this.state.question.title}</h1>);
         if (this.state.countdown !== undefined)
-            data.push(<h3>{this.state.countdown}</h3>)
+            data.push(<h3 key={1}>{this.state.countdown}</h3>)
+        if (this.state.question.imageUrl !== undefined)
+            data.push(<img style={{maxHeight: 200}} src={"http://localhost:4001/public/" + this.state.question.imageUrl} alt={"Image link"}/>)
         return data;
     }
 

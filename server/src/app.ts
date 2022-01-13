@@ -30,10 +30,15 @@ export default class App {
         })
         App.roomSocket = new RoomSocket(this.io);
         this.initializeSocketRoute();
+        this.initializeRoute();
     }
 
     public initializeSocketRoute() {
         this.io.on("connection", this.onConnection);
+    }
+
+    public initializeRoute() {
+        this.app.use('/public', express.static('public'))
     }
 
     private onConnection(socket: io.Socket) {

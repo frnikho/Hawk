@@ -9,6 +9,7 @@ export default class UserCardComponent extends React.Component {
 
     constructor(props) {
         super(props);
+
     }
 
     showLife() {

@@ -53,7 +53,6 @@ export default class Room {
             code: this._code,
             users: this._users.map((user) => user.toJSON()),
             game: this._game
-
         }
     }
 }

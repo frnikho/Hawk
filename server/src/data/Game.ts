@@ -19,8 +19,10 @@ export default class Game {
 
     private countdownTimer: number;
     private countdown: NodeJS.Timer;
+
     private gameState: GameState;
     private questions: QuestionManager;
+
     private room: Room;
     private players: Player[] = [];
 
@@ -33,7 +35,28 @@ export default class Game {
             let player: Player = {client: user, life: 3};
             this.players.push(player);
         }
+        this.initUserGameSocket();
         this.fetchQuestions();
+    }
+
+    private initUserGameSocket() {
+        this.room.users.forEach((user) => {
+           user.socket.on("game:answer", (data) => {
+               console.log(data);
+               this.onUserAnswered(user.socket, data);
+           });
+        });
+    }
+
+    private onUserAnswered(socket, data) {
+
+        this.players.forEach((player) => {
+            if (player.client.socket.id === socket.id) {
+                player.userAnswer = data;
+                this.sendGameUsersUpdateToEveryone();
+                return;
+            }
+        })
     }
 
     private fetchQuestions(): void {
@@ -41,8 +64,13 @@ export default class Game {
             questions.forEach((question) => this.questions.addQuestion(question));
         });
     }
+
     public sendGameUpdateToEveryone() {
         this.room.users.forEach((user) => this.sendGameUpdate(user.socket));
+    }
+
+    public sendGameUsersUpdateToEveryone() {
+        this.room.users.forEach((user) => this.sendGameUserUpdate(user.socket));
     }
 
     public start(): void {
@@ -66,6 +94,13 @@ export default class Game {
             data['question'] = question.toJSON();
         }
         socket.emit('game:update', data);
+    }
+
+    private sendGameUserUpdate(socket) {
+        let data = {
+            answeredUsers: this.players.map((user) => user.client.socket.id)
+        }
+        socket.emit('game:update:users', data);
     }
 
     private gameLoop() {
@@ -99,6 +134,7 @@ export default class Game {
         if (this.countdownTimer === 0) {
             //TODO CHECK WINNER OR NOT, IF NOT, GET A NEW QUESTIONS
 
+            this.questions.nextQuestion();
             this.gameState = GameState.ANSWER_TIME;
             this.countdownTimer = ANSWER_COUNTDOWN;
         }
@@ -108,3 +144,4 @@ export default class Game {
 
     }
 }
+

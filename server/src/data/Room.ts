@@ -1,4 +1,4 @@
-import User from "./User";
+import Client from "./Client";
 import * as short from 'short-uuid';
 import Game from "./Game";
 
@@ -7,7 +7,7 @@ const MAX_USERS: number = 10;
 export default class Room {
 
     private _code: short.SUUID;
-    private _users: User[];
+    private _users: Client[];
     private _game: Game;
 
     constructor() {
@@ -15,13 +15,13 @@ export default class Room {
         this._users = [];
     }
 
-    public addUser(user: User): void {
+    public addUser(user: Client): void {
         if (this.userAlreadyExists(user))
-            throw new Error("User is already in this room");
+            throw new Error("Client is already in this room");
             this._users.push(user);
     }
 
-    public userAlreadyExists(user: User): boolean {
+    public userAlreadyExists(user: Client): boolean {
         this._users.some((u)=>u.socket.id === user.socket.id);
 
 
@@ -40,7 +40,7 @@ export default class Room {
         this._game = game;
     }
 
-    get users(): User[] {
+    get users(): Client[] {
         return this._users;
     }
 

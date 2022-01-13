@@ -1,6 +1,6 @@
 import * as io from 'socket.io';
 import RoomManager from "../managers/RoomManager";
-import User from "../data/User";
+import Client from "../data/Client";
 import Room from "../data/Room";
 import Game from "../data/Game";
 
@@ -62,7 +62,7 @@ export default class RoomSocket {
     }
 
     private createRoom(socket: io.Socket, data: JSON) {
-        let user: User = new User(data['username'], socket);
+        let user: Client = new Client(data['username'], socket);
         let room: Room = new Room();
         room.addUser(user);
         if (this.manager.addRoom(room)) {
@@ -95,7 +95,7 @@ export default class RoomSocket {
             throw new RoomException("required username and room code data !", socket);
         if (this.manager.checkRoomExistsByCode(data['roomCode'])) {
             let room = this.manager.getRoomByCode(data['roomCode']);
-            room.addUser(new User(data['username'], socket));
+            room.addUser(new Client(data['username'], socket));
             this.io.emit(room.code, room);  // EMIT UPDATE TO ROOM CLIENT
             socket.join(room.code); // JOIN SOCKETIO ROOM
             return this.roomJoined(socket, room);

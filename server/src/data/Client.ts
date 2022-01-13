@@ -1,6 +1,6 @@
 import * as io from 'socket.io';
 
-export default class User {
+export default class Client {
 
     private readonly _username: string;
     private readonly _socket: io.Socket;

@@ -2,6 +2,7 @@ import Room from "./Room";
 import QuestionManager from "../managers/QuestionManager";
 import {getRandomQuestions} from "../repository/QuestionRepository";
 import Question from "./Question";
+import Player from "./Player";
 
 export enum GameState {
     STARTING,
@@ -21,12 +22,17 @@ export default class Game {
     private gameState: GameState;
     private questions: QuestionManager;
     private room: Room;
+    private players: Player[] = [];
 
     constructor(room: Room) {
         this.room = room;
         this.countdownTimer = STARTING_COUNTDOWN;
         this.gameState = GameState.STARTING;
         this.questions = new QuestionManager();
+        for (let user of this.room.users) {
+            let player: Player = {client: user, life: 3};
+            this.players.push(player);
+        }
         this.fetchQuestions();
     }
 
@@ -53,11 +59,11 @@ export default class Game {
         let data: object = {
             countdown: this.countdownTimer,
             state: this.gameState,
-        }
+            players: this.players,
+        };
         let question: Question | undefined = Question.fromJSON(this.questions.getCurrentQuestion());
         if (question instanceof Question) {
             data['question'] = question.toJSON();
-            data['users'] = this.room.users;
         }
         socket.emit('game:update', data);
     }

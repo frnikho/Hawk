@@ -13,7 +13,7 @@ export default class UserCardComponent extends React.Component {
 
     showLife() {
         let life = [];
-        for (let i = 0; i < this.props.user.life; i++) {
+        for (let i = 0; i < this.props.player.life; i++) {
             life.push(
                 <Grid item textAlign={"center"}>
                     ❤
@@ -27,7 +27,7 @@ export default class UserCardComponent extends React.Component {
             <Grid item>
                 <Paper>
                     <Box sx={{width: 180, height: 50}}>
-                        <Typography>{this.props.user.username}</Typography>
+                        <Typography>{this.props.player.client.username}</Typography>
                         <Grid container textAlign={"center"} alignContent={"center"}>
                             {this.showLife()}
                         </Grid>

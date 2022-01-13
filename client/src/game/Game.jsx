@@ -13,7 +13,7 @@ class Game extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            users: undefined,
+            players: undefined,
             question: undefined,
             state: undefined,
             countdown: 0
@@ -33,7 +33,7 @@ class Game extends React.Component {
             question: data.question,
             countdown: data.countdown,
             state: data.state,
-            users: data.users
+            players: data.players
         });
     }
 
@@ -43,12 +43,12 @@ class Game extends React.Component {
     }
 
     showUsers() {
-        if (this.state.users === undefined)
+        if (this.state.players === undefined)
             return;
 
         return (
             <Grid container spacing={2}>
-                {this.state.users.map((user, index) => <UserCardComponent key={index} user={user}/>)}
+                {this.state.players.map((player, index) => <UserCardComponent key={index} player={player}/>)}
             </Grid>
         )
     }

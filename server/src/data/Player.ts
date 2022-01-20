@@ -4,5 +4,6 @@ export default interface Player {
     client: Client,
     life: number,
     userAnswer?: number,
+    isAnswered: boolean,
 
 }

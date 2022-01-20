@@ -32,7 +32,7 @@ export default class Game {
         this.gameState = GameState.STARTING;
         this.questions = new QuestionManager();
         for (let user of this.room.users) {
-            let player: Player = {client: user, life: 3};
+            let player: Player = {client: user, life: 3, isAnswered: false};
             this.players.push(player);
         }
         this.initUserGameSocket();
@@ -53,6 +53,7 @@ export default class Game {
         this.players.forEach((player) => {
             if (player.client.socket.id === socket.id) {
                 player.userAnswer = data;
+                player.isAnswered = true;
                 this.sendGameUsersUpdateToEveryone();
                 return;
             }
@@ -133,7 +134,7 @@ export default class Game {
     private responseState() {
         if (this.countdownTimer === 0) {
             //TODO CHECK WINNER OR NOT, IF NOT, GET A NEW QUESTIONS
-
+            this.players.map((user) => user.isAnswered = false);
             this.questions.nextQuestion();
             this.gameState = GameState.ANSWER_TIME;
             this.countdownTimer = ANSWER_COUNTDOWN;

@@ -16,7 +16,7 @@ export default class Question {
 
     static fromJSON(data: object): Question | undefined {
         try {
-            return new Question(data['title'], data['answers'], data['image_url']);
+            return new Question(data['title'], data['answers'], data['image_url'], data['answer'], data['difficulty']);
         } catch (ex) {
             return undefined;
         }

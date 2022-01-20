@@ -52,12 +52,14 @@ export default class Game {
 
         this.players.forEach((player) => {
             if (player.client.socket.id === socket.id) {
+                if (player.life <= 0)
+                    return;
                 player.userAnswer = data;
                 player.isAnswered = true;
                 this.sendGameUsersUpdateToEveryone();
                 return;
             }
-        })
+        });
     }
 
     private fetchQuestions(): void {
@@ -111,8 +113,6 @@ export default class Game {
             this.answerState();
         } else if (this.gameState === GameState.RESPONSE_TIME) {
             this.responseState();
-        } else if (this.gameState === GameState.PODIUM) {
-            this.podiumState();
         }
         this.countdownTimer--;
     }
@@ -128,12 +128,36 @@ export default class Game {
         if (this.countdownTimer === 0) {
             this.gameState = GameState.RESPONSE_TIME;
             this.countdownTimer = RESPONSE_COUNTDOWN;
+            this.players.forEach((user) => {
+                if (user.userAnswer === undefined || (user.userAnswer['index'] !== this.questions.getCurrentQuestion()['answer'])) {
+                    if (user.life > 0)
+                        user.life--;
+                }
+                user.client.socket.emit('game:endQuestions', this.questions.getCurrentQuestion()['answer']);
+            });
+            //this.checkWin();
+        }
+    }
+
+    private checkWin() {
+        let usersLeft: number = 0;
+        this.players.map((player) => {
+           if (player.life > 0)
+               usersLeft++;
+        });
+        if (usersLeft <= 1) {
+            this.gameState = GameState.PODIUM;
+            clearInterval(this.countdown);
+            this.onPodiumState();
         }
     }
 
     private responseState() {
         if (this.countdownTimer === 0) {
             //TODO CHECK WINNER OR NOT, IF NOT, GET A NEW QUESTIONS
+            this.players.forEach((user) => {
+                user.client.socket.emit('game:newQuestion');
+            });
             this.players.map((user) => user.isAnswered = false);
             this.questions.nextQuestion();
             this.gameState = GameState.ANSWER_TIME;
@@ -141,8 +165,8 @@ export default class Game {
         }
     }
 
-    private podiumState() {
-
+    private onPodiumState() {
+        console.log("END GAME !");
     }
 }
 

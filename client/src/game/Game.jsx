@@ -19,17 +19,36 @@ class Game extends React.Component {
             state: undefined,
             countdown: 0,
             answered: undefined,
+            goodAnswer: undefined,
         }
         this.onClickAnswerCard = this.onClickAnswerCard.bind(this);
         this.onUpdate = this.onUpdate.bind(this);
         this.onUpdateUsers = this.onUpdateUsers.bind(this);
+        this.onEndQuestions = this.onEndQuestions.bind(this);
+        this.onNewQuestion = this.onNewQuestion.bind(this);
     }
 
     componentDidMount() {
         this.socket = this.context;
         this.socket.on('game:update', this.onUpdate);
         this.socket.on('game:update:users', this.onUpdateUsers)
+        this.socket.on('game:endQuestions', this.onEndQuestions)
+        this.socket.on('game:newQuestion', this.onNewQuestion);
         this.socket.emit('game:update:get', {hello: "world"});
+    }
+
+    onEndQuestions(data) {
+        console.log("End questions ");
+        this.setState({
+            goodAnswer: data,
+        })
+        console.log('good: ', data);
+    }
+
+    onNewQuestion() {
+        this.setState({
+            goodAnswer: undefined,
+        })
     }
 
     onUpdateUsers(data) {
@@ -41,7 +60,7 @@ class Game extends React.Component {
             question: data.question,
             countdown: data.countdown,
             state: data.state,
-            players: data.players
+            players: data.players,
         });
     }
 
@@ -62,7 +81,7 @@ class Game extends React.Component {
 
         return (
             <Grid container spacing={2}>
-                {this.state.players.map((player, index) => <UserCardComponent key={index} player={player}/>)}
+                {this.state.players.map((player, index) => <UserCardComponent key={player} player={player}/>)}
             </Grid>
         )
     }
@@ -74,7 +93,7 @@ class Game extends React.Component {
         let abc = JSON.parse(this.state.question.answers);
         return (
             <Grid container spacing={6} alignContent={"center"} textAlign={"center"}>
-                {abc.map((answer, index) => <AnswerCardComponent answered={this.state.answered} key={index} answer={answer} onClick={() => this.onClickAnswerCard(answer, index)}/>)}
+                {abc.map((answer, index) => <AnswerCardComponent answered={this.state.answered} goodAnswer={index === this.state.goodAnswer} key={index} answer={answer} onClick={() => this.onClickAnswerCard(answer, index)}/>)}
             </Grid>
         )
     }

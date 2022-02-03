@@ -21,6 +21,12 @@ export default class Room {
             this._users.push(user);
     }
 
+    public removeUser(user: Client): void {
+        let index = this._users.findIndex((u) => u.socket.id === user.socket.id);
+        if (index !== -1)
+            this._users.splice(index, 1);
+    }
+
     public userAlreadyExists(user: Client): boolean {
         this._users.some((u)=>u.socket.id === user.socket.id);
 
@@ -38,6 +44,10 @@ export default class Room {
 
     public setGame(game: Game): void {
         this._game = game;
+    }
+
+    public getGame(): Game {
+        return this._game;
     }
 
     get users(): Client[] {

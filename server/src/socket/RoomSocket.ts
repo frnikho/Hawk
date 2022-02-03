@@ -41,11 +41,25 @@ export default class RoomSocket {
             socket.on("room:delete", (data) => this.deleteRoom(socket, data));
             socket.on("room:info:get", (data) => this.getRoomInformation(socket, data));
             socket.on("room:game:start", (data) => this.startRoom(socket, data));
+            socket.on("disconnect", (data) => this.onDisconnect(socket, data));
         } catch (error) {
             console.log(error);
             if (error instanceof RoomException) {
                 error.getSocket.emit('room:error', error.message);
             }
+        }
+    }
+
+    private onDisconnect(socket, data) {
+        let room = this.manager.getRoomByUserSocket(socket.id)[0];
+        if (room !== undefined) {
+            let client: Client = room.users.find((user) => user.socket.id === socket.id);
+            room.getGame().onUserDisconnected(client);
+            room.removeUser(client);
+            if (room.users.length <= 0)
+                room.removeUser(client);
+            else
+                console.log(room.users.length);
         }
     }
 
@@ -90,22 +104,28 @@ export default class RoomSocket {
         socket.emit("room:join:success", {success: true, room: room.toJSON()});
     }
 
+    private roomJoinError(socket: io.Socket, msg: string): void {
+        socket.emit("room:join:error", {success: false, msg})
+    }
+
     private joinRoom(socket: io.Socket, data: JSON) {
-        if (data['username'] === undefined || data['roomCode'] === undefined)
-            throw new RoomException("required username and room code data !", socket);
-        if (this.manager.checkRoomExistsByCode(data['roomCode'])) {
+        if (data['username'] === undefined || data['roomCode'] === undefined) {
+            return this.roomJoinError(socket, "Invalid room code !");
+        } else if (this.manager.checkRoomExistsByCode(data['roomCode'])) {
             let room = this.manager.getRoomByCode(data['roomCode']);
             room.addUser(new Client(data['username'], socket));
             this.io.emit(room.code, room);  // EMIT UPDATE TO ROOM CLIENT
             socket.join(room.code); // JOIN SOCKETIO ROOM
             return this.roomJoined(socket, room);
         } else {
-            throw new RoomException("Invalid room code !", socket);
+            return this.roomJoinError(socket, "Invalid room code !");
         }
     }
 
     private leaveRoom(socket: io.Socket, data: JSON) {
         let room = this.manager.getRoomByUserSocket(socket.id);
+        if (room.length <= 0)
+            return;
         this.manager.removeUserBySocketId(socket.id);
         this.io.emit(room[0].code, room);
     }

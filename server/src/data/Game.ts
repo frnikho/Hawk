@@ -3,6 +3,7 @@ import QuestionManager from "../managers/QuestionManager";
 import {getRandomQuestions} from "../repository/QuestionRepository";
 import Question from "./Question";
 import Player from "./Player";
+import Client from "./Client";
 
 export enum GameState {
     STARTING,
@@ -12,8 +13,8 @@ export enum GameState {
 }
 
 const STARTING_COUNTDOWN: number = 5;
-const ANSWER_COUNTDOWN: number = 15;
-const RESPONSE_COUNTDOWN: number = 10;
+const ANSWER_COUNTDOWN: number = 10;
+const RESPONSE_COUNTDOWN: number = 3;
 
 export default class Game {
 
@@ -41,15 +42,25 @@ export default class Game {
 
     private initUserGameSocket() {
         this.room.users.forEach((user) => {
-           user.socket.on("game:answer", (data) => {
+            user.socket.on("disconnect", () => {
+
+            });
+            user.socket.on("game:answer", (data) => {
                console.log(data);
                this.onUserAnswered(user.socket, data);
-           });
+            });
         });
     }
 
-    private onUserAnswered(socket, data) {
+    public onUserDisconnected(user: Client) {
+        let index = this.players.findIndex((player) => player.client.socket.id === user.socket.id);
+        if (index == -1)
+            return;
+        this.players.splice(index, 1);
+        this.sendGameUpdateToEveryone();
+    }
 
+    private onUserAnswered(socket, data) {
         this.players.forEach((player) => {
             if (player.client.socket.id === socket.id) {
                 if (player.life <= 0)
@@ -159,8 +170,11 @@ export default class Game {
                 user.client.socket.emit('game:newQuestion');
             });
             this.players.map((user) => user.isAnswered = false);
-            this.questions.nextQuestion();
-            this.gameState = GameState.ANSWER_TIME;
+            if (this.questions.nextQuestion() === undefined) {
+                this.gameState = GameState.PODIUM;
+            } else {
+                this.gameState = GameState.ANSWER_TIME;
+            }
             this.countdownTimer = ANSWER_COUNTDOWN;
         }
     }

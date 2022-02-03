@@ -16,7 +16,17 @@ export default class RoomManager {
         }
         return true;
     }
-    
+
+    public removeRoom(room: Room) {
+        try {
+            let index: number = RoomManager._rooms.findIndex((r) => r.code === room.code);
+            if (index !== -1)
+                RoomManager._rooms.splice(index, 1);
+        } catch (ex) {
+            console.log(ex);
+        }
+    }
+
     public removeUserBySocketId(socketId: string): void {
         for (let room of RoomManager._rooms) {
             for (let i = 0; i < room.users.length; i++) {

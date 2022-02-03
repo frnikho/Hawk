@@ -5,7 +5,8 @@ import { Lobby } from "./lobby";
 
 import { SocketContext, socket } from "./context/SocketContext";
 import { Game } from "./game";
-import { Prompt } from 'react-router';
+import {Navigate} from "react-router-dom";
+import NotFoundPage from './404/NotFoundPage'
 
 
 export default class App extends React.Component {
@@ -18,6 +19,8 @@ export default class App extends React.Component {
             <Route path="/" element={<Home />} />
             <Route path="/lobby/:code" exact element={<Lobby />} />
             <Route path="/game/:code" exact element={<Game />} />
+            <Route path="/404" component={NotFoundPage} />
+            <Navigate to="/404" />
           </Routes>
         </SocketContext.Provider>
       </div>

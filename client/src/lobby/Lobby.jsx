@@ -33,7 +33,7 @@ class Lobby extends React.Component {
             console.log("INFO", data);
         })
 
-        socket.on(`room:info:error`, (data) => {
+        socket.on(`room:info:error`, () => {
             this.setState({
                 redirect: true,
                 redirectUrl: '/',

@@ -1,26 +1,28 @@
 import React from "react";
-import {Route, Routes} from "react-router-dom";
-import {Home} from "./home";
-import {Lobby} from "./lobby";
+import { Route, Routes } from "react-router-dom";
+import { Home } from "./home";
+import { Lobby } from "./lobby";
 
-import {SocketContext, socket} from "./context/SocketContext";
-import {Game} from "./game";
+import { SocketContext, socket } from "./context/SocketContext";
+import { Game } from "./game";
+import { Prompt } from 'react-router';
+
 
 export default class App extends React.Component {
 
-    render() {
-        return (
-            <div className="App">
-                <SocketContext.Provider value={socket}>
-                    <Routes>
-                        <Route path="/" element={<Home/>}/>
-                        <Route path="/lobby/:code" exact element={<Lobby/>}/>
-                        <Route path="/game/:code" exact element={<Game/>}/>
-                    </Routes>
-                </SocketContext.Provider>
-            </div>
-        );
-    }
+  render() {
+    return (
+      <div className="App">
+        <SocketContext.Provider value={socket}>
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/lobby/:code" exact element={<Lobby />} />
+            <Route path="/game/:code" exact element={<Game />} />
+          </Routes>
+        </SocketContext.Provider>
+      </div>
+    );
+  }
 }
 
 /*

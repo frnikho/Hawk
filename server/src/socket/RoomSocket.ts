@@ -62,23 +62,30 @@ export default class RoomSocket {
     }
 
     private createRoom(socket: io.Socket, data: JSON) {
-        let user: Client = new Client(data['username'], socket);
-        let room: Room = new Room();
-        room.addUser(user);
-        if (this.manager.addRoom(room)) {
-            socket.join(room.code);
-            return this.roomCreated(socket, room);
-        } else {
-            throw new RoomException("Cannot created room, please try again later !", socket);
+        try {
+            let user: Client = new Client(data['username'], socket);
+            let room: Room = new Room();
+            room.addUser(user);
+            if (this.manager.addRoom(room)) {
+                socket.join(room.code);
+                return this.roomCreated(socket, room);
+            } else {
+                return socket.emit("room:create:error", {success: false});
+            }
+        } catch (err) {
+            return socket.emit("room:create:error", {success: false});
         }
     }
 
     private getRoomInformation(socket: io.Socket, data: JSON) {
         try {
             let room = this.manager.getRoomByCode(data['roomCode']);
+            if (room === undefined) {
+                return socket.emit("room:info:error", {success: false});
+            }
             socket.emit("room:info", room);
         } catch (ex) {
-            throw new RoomException("Cannot get room information !", socket);
+            socket.emit("room:info:error", {success: false});
         }
     }
 

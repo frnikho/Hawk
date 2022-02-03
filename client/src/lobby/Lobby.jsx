@@ -33,6 +33,13 @@ class Lobby extends React.Component {
             console.log("INFO", data);
         })
 
+        socket.on(`room:info:error`, (data) => {
+            this.setState({
+                redirect: true,
+                redirectUrl: '/',
+            });
+        })
+
         socket.on('room:started', () => {
             this.setState({
                 redirect: true,
@@ -105,8 +112,8 @@ class Lobby extends React.Component {
                             sx={{ mr: 2 }}>
                         </IconButton>
 
-                        <Typography variant="h6" component="div" sx={{ flexGrow: 1 }} color="common.white">
-                            <h1>{this.props.params.code}</h1>
+                        <Typography variant="h6" component="div" sx={{ flexGrow: 1 }} color="common.black">
+                            <h1>Room code: {this.props.params.code}</h1>
                         </Typography>
                         <Button onClick={this.onClickLeaveRoom} variant={"outlined"} color={"error"}>Leave room</Button>
                     </Toolbar>

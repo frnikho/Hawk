@@ -54,7 +54,8 @@ export default class RoomSocket {
         let room = this.manager.getRoomByUserSocket(socket.id)[0];
         if (room !== undefined) {
             let client: Client = room.users.find((user) => user.socket.id === socket.id);
-            room.getGame().onUserDisconnected(client);
+            if (room.getGame() !== undefined)
+                room.getGame().onUserDisconnected(client);
             room.removeUser(client);
             if (room.users.length <= 0)
                 room.removeUser(client);

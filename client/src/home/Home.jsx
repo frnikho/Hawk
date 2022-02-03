@@ -58,6 +58,10 @@ class Home extends React.Component {
     onClickCreateRoom() {
         let socket = this.context
         console.log("CLICKED CREATE");
+        if (this.state.username === undefined) {
+            alert("Please enter a username");
+            return;
+        }
         socket.emit("room:create", {username: this.state.username});
     }
 

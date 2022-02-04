@@ -7,6 +7,7 @@ import UserCardComponent from "../components/UserCardComponent";
 import GameStart from "./GameStart";
 import withRouter from "../components/withRouter";
 import {Navigate} from "react-router-dom";
+import Box from "@mui/material/Box";
 
 class Game extends React.Component {
   static contextType = SocketContext;

@@ -22,24 +22,8 @@ export default class Question {
         }
     }
 
-    get title(): string {
+    public getTitle(): string {
         return this._title;
-    }
-
-    get answers(): string[] {
-        return this._answers;
-    }
-
-    get goodAnswer(): number {
-        return this._goodAnswer;
-    }
-
-    get imageUrl(): string {
-        return this._imageUrl;
-    }
-
-    get difficulty(): number {
-        return this._difficulty;
     }
 
     public toJSON(): object {

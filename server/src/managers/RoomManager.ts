@@ -19,7 +19,7 @@ export default class RoomManager {
 
     public removeRoom(room: Room) {
         try {
-            let index: number = RoomManager._rooms.findIndex((r) => r.code === room.code);
+            let index: number = RoomManager._rooms.findIndex((r) => r.getCode() === room.getCode());
             if (index !== -1)
                 RoomManager._rooms.splice(index, 1);
         } catch (ex) {
@@ -29,9 +29,9 @@ export default class RoomManager {
 
     public removeUserBySocketId(socketId: string): void {
         for (let room of RoomManager._rooms) {
-            for (let i = 0; i < room.users.length; i++) {
-                if (room.users[i].socket.id === socketId) {
-                    room.users.splice(i, 1);
+            for (let i = 0; i < room.getUser().length; i++) {
+                if (room.getUser()[i].getSocket().id === socketId) {
+                    room.getUser().splice(i, 1);
                     return;
                 }
             }
@@ -40,7 +40,7 @@ export default class RoomManager {
 
     public checkRoomExists(room: Room): boolean {
         for (let r of RoomManager._rooms) {
-            if (r.code === room.code)
+            if (r.getCode() === room.getCode())
                 return true;
         }
         return false;
@@ -49,19 +49,19 @@ export default class RoomManager {
         if (code === undefined)
             return false;
         for (let r of RoomManager._rooms) {
-            if (r.code === code)
+            if (r.getCode() === code)
                 return true;
         }
         return false;
     }
 
     public getRoomByUserSocket(socketId: string): Room[] | undefined {
-        return RoomManager._rooms.filter((room)=>room.users.find((user)=>user.socket.id === socketId));
+        return RoomManager._rooms.filter((room)=>room.getUser().find((user)=>user.getSocket().id === socketId));
     }
 
     public getRoomByCode(code: string): Room | undefined {
         for (let room of RoomManager._rooms) {
-            if (room.code === code)
+            if (room.getCode() === code)
                 return room;
         }
         return undefined;

@@ -22,17 +22,17 @@ export default class Room {
     }
 
     public removeUser(user: Client): void {
-        let index = this._users.findIndex((u) => u.socket.id === user.socket.id);
+        let index = this._users.findIndex((u) => u.getSocket().id === user.getSocket().id);
         if (index !== -1)
             this._users.splice(index, 1);
     }
 
     public userAlreadyExists(user: Client): boolean {
-        this._users.some((u)=>u.socket.id === user.socket.id);
+        this._users.some((u)=>u.getSocket().id === user.getSocket().id);
 
 
         for (let u of this._users) {
-            if (u.socket.id === user.socket.id)
+            if (u.getSocket().id === user.getSocket().id)
                 return true;
         }
         return false;
@@ -50,11 +50,11 @@ export default class Room {
         return this._game;
     }
 
-    get users(): Client[] {
+    public getUser(): Client[] {
         return this._users;
     }
 
-    get code(): short.SUUID {
+    public getCode(): string {
         return this._code;
     }
 

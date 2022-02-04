@@ -13,9 +13,9 @@ export class RoomException extends Error {
         this._socket = socket;
     }
 
-    get getSocket(): io.Socket {
+    public getSocket(): io.Socket {
         return this._socket;
-    };
+    }
 
 }
 
@@ -29,7 +29,7 @@ export default class RoomSocket {
         this.manager = new RoomManager();
     }
 
-    get roomManager(): RoomManager {
+    public getRoomManager(): RoomManager {
         return this.manager;
     }
 
@@ -45,7 +45,7 @@ export default class RoomSocket {
         } catch (error) {
             console.log(error);
             if (error instanceof RoomException) {
-                error.getSocket.emit('room:error', error.message);
+                error.getSocket().emit('room:error', error.message);
             }
         }
     }
@@ -53,14 +53,14 @@ export default class RoomSocket {
     private onDisconnect(socket, data) {
         let room = this.manager.getRoomByUserSocket(socket.id)[0];
         if (room !== undefined) {
-            let client: Client = room.users.find((user) => user.socket.id === socket.id);
+            let client: Client = room.getUser().find((user) => user.getSocket().id === socket.id);
             if (room.getGame() !== undefined)
                 room.getGame().onUserDisconnected(client);
             room.removeUser(client);
-            if (room.users.length <= 0)
+            if (room.getUser().length <= 0)
                 room.removeUser(client);
             else
-                console.log(room.users.length);
+                console.log(room.getUser().length);
         }
     }
 
@@ -68,7 +68,7 @@ export default class RoomSocket {
         try {
             let room: Room = this.manager.getRoomByCode(data['roomCode']);
             room.setGame(new Game(room));
-            this.io.to(room.code).emit('room:started');
+            this.io.to(room.getCode()).emit('room:started');
             room.start();
         } catch (ex: any) {
             console.log(ex);
@@ -82,7 +82,7 @@ export default class RoomSocket {
             let room: Room = new Room();
             room.addUser(user);
             if (this.manager.addRoom(room)) {
-                socket.join(room.code);
+                socket.join(room.getCode());
                 return this.roomCreated(socket, room);
             } else {
                 return socket.emit("room:create:error", {success: false});
@@ -122,8 +122,8 @@ export default class RoomSocket {
         } else if (this.manager.checkRoomExistsByCode(data['roomCode'])) {
             let room = this.manager.getRoomByCode(data['roomCode']);
             room.addUser(new Client(data['username'], socket));
-            this.io.emit(room.code, room);  // EMIT UPDATE TO ROOM CLIENT
-            socket.join(room.code); // JOIN SOCKETIO ROOM
+            this.io.emit(room.getCode(), room);  // EMIT UPDATE TO ROOM CLIENT
+            socket.join(room.getCode()); // JOIN SOCKETIO ROOM
             return this.roomJoined(socket, room);
         } else {
             return this.roomJoinError(socket, "Invalid room code !");
@@ -135,7 +135,7 @@ export default class RoomSocket {
         if (room.length <= 0)
             return;
         this.manager.removeUserBySocketId(socket.id);
-        this.io.emit(room[0].code, room);
+        this.io.emit(room[0].getCode(), room);
     }
 
     private deleteRoom(socket: io.Socket, data: JSON) {

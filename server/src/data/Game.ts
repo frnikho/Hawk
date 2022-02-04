@@ -32,7 +32,7 @@ export default class Game {
         this.countdownTimer = STARTING_COUNTDOWN;
         this.gameState = GameState.STARTING;
         this.questions = new QuestionManager();
-        for (let user of this.room.users) {
+        for (let user of this.room.getUser()) {
             let player: Player = {client: user, life: 3, isAnswered: false};
             this.players.push(player);
         }
@@ -41,19 +41,15 @@ export default class Game {
     }
 
     private initUserGameSocket() {
-        this.room.users.forEach((user) => {
-            user.socket.on("disconnect", () => {
-
-            });
-            user.socket.on("game:answer", (data) => {
-               console.log(data);
-               this.onUserAnswered(user.socket, data);
+        this.room.getUser().forEach((user) => {
+            user.getSocket().on("game:answer", (data) => {
+               this.onUserAnswered(user.getSocket(), data);
             });
         });
     }
 
     public onUserDisconnected(user: Client) {
-        let index = this.players.findIndex((player) => player.client.socket.id === user.socket.id);
+        let index = this.players.findIndex((player) => player.client.getSocket().id === user.getSocket().id);
         if (index == -1)
             return;
         this.players.splice(index, 1);
@@ -62,7 +58,7 @@ export default class Game {
 
     private onUserAnswered(socket, data) {
         this.players.forEach((player) => {
-            if (player.client.socket.id === socket.id) {
+            if (player.client.getSocket().id === socket.id) {
                 if (player.life <= 0)
                     return;
                 player.userAnswer = data;
@@ -80,15 +76,15 @@ export default class Game {
     }
 
     public sendGameUpdateToEveryone() {
-        this.room.users.forEach((user) => this.sendGameUpdate(user.socket));
+        this.room.getUser().forEach((user) => this.sendGameUpdate(user.getSocket()));
     }
 
     public sendGameUsersUpdateToEveryone() {
-        this.room.users.forEach((user) => this.sendGameUserUpdate(user.socket));
+        this.room.getUser().forEach((user) => this.sendGameUserUpdate(user.getSocket()));
     }
 
     public start(): void {
-        this.room.users.forEach((user) => this.sendGameUpdate(user.socket));
+        this.room.getUser().forEach((user) => this.sendGameUpdate(user.getSocket()));
 
         this.countdown = setInterval(() => {
             this.gameLoop();
@@ -112,7 +108,7 @@ export default class Game {
 
     private sendGameUserUpdate(socket) {
         let data = {
-            answeredUsers: this.players.map((user) => user.client.socket.id)
+            answeredUsers: this.players.map((user) => user.client.getSocket().id)
         }
         socket.emit('game:update:users', data);
     }
@@ -144,7 +140,7 @@ export default class Game {
                     if (user.life > 0)
                         user.life--;
                 }
-                user.client.socket.emit('game:endQuestions', this.questions.getCurrentQuestion()['answer']);
+                user.client.getSocket().emit('game:endQuestions', this.questions.getCurrentQuestion()['answer']);
             });
             //this.checkWin();
         }
@@ -167,11 +163,14 @@ export default class Game {
         if (this.countdownTimer === 0) {
             //TODO CHECK WINNER OR NOT, IF NOT, GET A NEW QUESTIONS
             this.players.forEach((user) => {
-                user.client.socket.emit('game:newQuestion');
+                user.client.getSocket().emit('game:newQuestion');
             });
             this.players.map((user) => user.isAnswered = false);
             if (this.questions.nextQuestion() === undefined) {
+                console.log("NO NEW QUESTIONS");
                 this.gameState = GameState.PODIUM;
+                clearInterval(this.countdown);
+                this.onPodiumState();
             } else {
                 this.gameState = GameState.ANSWER_TIME;
             }
@@ -181,6 +180,9 @@ export default class Game {
 
     private onPodiumState() {
         console.log("END GAME !");
+        this.players.forEach((player) => {
+            player.client.getSocket().emit('game:podium', this.players);
+        });
     }
 }
 

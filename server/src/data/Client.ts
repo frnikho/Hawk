@@ -12,11 +12,11 @@ export default class Client {
         this._socket = socket;
     }
 
-    get username() {
+    public getUsername() {
         return this._username;
     }
 
-    get socket(): io.Socket {
+    public getSocket() {
         return this._socket;
     }
 

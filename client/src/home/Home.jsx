@@ -2,7 +2,7 @@ import React from "react";
 import Container from '@mui/material/Container';
 import { ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
-import {Avatar, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Typography} from "@mui/material";
+import {Avatar, Dialog, DialogActions, DialogContent, DialogTitle, Typography} from "@mui/material";
 import PersonIcon from '@mui/icons-material/Person';
 import Box from '@mui/material/Box';
 import theme from '../theme'

@@ -1,15 +1,15 @@
 import React from "react";
-import {SocketContext} from "../context/SocketContext";
+import { SocketContext } from "../context/SocketContext";
 import Container from "@mui/material/Container";
 import {Grid, List, ListItem, ListItemButton, ListItemIcon, ListItemText} from "@mui/material";
 import AnswerCardComponent from "../components/AnswerCardComponent";
 import UserCardComponent from "../components/UserCardComponent";
 import GameStart from "./GameStart";
-import Box from "@mui/material/Box";
+import withRouter from "../components/withRouter";
+import {Navigate} from "react-router-dom";
 
 class Game extends React.Component {
-
-    static contextType = SocketContext;
+  static contextType = SocketContext;
 
     constructor(props) {
         super(props);
@@ -21,6 +21,8 @@ class Game extends React.Component {
             countdown: 0,
             answered: undefined,
             goodAnswer: undefined,
+            redirect: false,
+            redirectUrl: undefined,
         }
         this.onClickAnswerCard = this.onClickAnswerCard.bind(this);
         this.onUpdate = this.onUpdate.bind(this);
@@ -28,6 +30,7 @@ class Game extends React.Component {
         this.onEndQuestions = this.onEndQuestions.bind(this);
         this.onNewQuestion = this.onNewQuestion.bind(this);
         this.onPodium = this.onPodium.bind(this);
+        this.onGameError = this.onGameError.bind(this);
     }
 
     componentDidMount() {
@@ -37,7 +40,13 @@ class Game extends React.Component {
         this.socket.on('game:endQuestions', this.onEndQuestions)
         this.socket.on('game:newQuestion', this.onNewQuestion);
         this.socket.on('game:podium', this.onPodium)
-        this.socket.emit('game:update:get', {hello: "world"});
+    }
+
+    onGameError() {
+        this.setState({
+            redirect: true,
+            redirectUrl: "/",
+        });
     }
 
     onEndQuestions(data) {
@@ -163,8 +172,11 @@ class Game extends React.Component {
 
     render() {
         if (this.state.state === undefined || this.state.state === 0)
-            return <GameStart countdown={this.state.countdown}/>
-
+            return (
+                <>
+                    {this.state.redirect ? <Navigate to={this.state.redirectUrl}/> : null}
+                    <GameStart countdown={this.state.countdown}/>
+                </>)
 
         if (this.state.state === 3) {
             return this.showPodium();
@@ -174,4 +186,4 @@ class Game extends React.Component {
     }
 }
 
-export default Game;
+export default withRouter(Game);

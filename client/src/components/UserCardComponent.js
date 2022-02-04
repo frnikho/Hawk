@@ -16,19 +16,38 @@ export default class UserCardComponent extends React.Component {
         let life = [];
         for (let i = 0; i < this.props.player.life; i++) {
             life.push(
-                <Grid item textAlign={"center"}>
+                <Grid key={i} item textAlign={"center"}>
                     ❤
                 </Grid>);
         }
         return life;
     }
 
+    userBox(box) {
+        if (this.props.player.life <= 0) {
+            if (box === true)
+                return {backgroundColor: "#e74c3c"}
+            else
+                return {textColor: "white"}
+        } else if (this.props.player.isAnswered) {
+            if (box === true)
+                return {backgroundColor: "#34495e"}
+            else
+                return {textColor: "white"}
+        } else {
+            if (box === true)
+                return {backgroundColor: "white"}
+            else
+                return {textColor: "black"}
+        }
+    }
+
     render() {
         return (
             <Grid item>
                 <Paper>
-                    <Box sx={{width: 180, height: 50, backgroundColor: this.props.player.isAnswered ? 'primary.dark' : ""}} >
-                        <Typography>{this.props.player.client.username}</Typography>
+                    <Box style={this.userBox(true)} sx={{width: 180, height: 50}} >
+                        <Typography color={this.userBox(false)}>{this.props.player.client.username}</Typography>
                         <Grid container textAlign={"center"} alignContent={"center"}>
                             {this.showLife()}
                         </Grid>

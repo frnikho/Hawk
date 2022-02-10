@@ -1,10 +1,12 @@
 import React from "react";
 import withRouter from "../components/withRouter";
-import {AppBar, Grid, IconButton, Toolbar, Typography} from "@mui/material";
+import {AppBar, Grid, IconButton, Paper, Toolbar, Typography} from "@mui/material";
 import Button from "@mui/material/Button";
 import {SocketContext} from "../context/SocketContext";
 import {Navigate} from "react-router-dom";
 import Box from "@mui/material/Box";
+import Container from "@mui/material/Container";
+import PersonIcon from '@mui/icons-material/Person';
 
 class Lobby extends React.Component {
 
@@ -69,8 +71,13 @@ class Lobby extends React.Component {
             return;
         return (
             this.state.room.users.map((user, index) => {
-                return (<Grid item key={index}>
-                    <h1 key={index}>{user.username}</h1>
+                return (<Grid key={index} xs={3} item>
+                    <Box sx={{m: 2}}>
+                        <Paper sx={{p: 2}}>
+                            <PersonIcon/>
+                            <Typography fontWeight={"700"} fontSize={20}>{user.username}</Typography>
+                        </Paper>
+                     </Box>
                 </Grid>)
             })
         )
@@ -111,18 +118,22 @@ class Lobby extends React.Component {
                             aria-label="menu"
                             sx={{ mr: 2 }}>
                         </IconButton>
-
-                        <Typography variant="h6" component="div" sx={{ flexGrow: 1 }} color="common.black">
-                            <h1>Room code: {this.props.params.code}</h1>
+                        <Typography fontSize={20} sx={{ flexGrow: 1 }} color="common.black">
+                            Room: <b>{this.props.params.code}</b>
                         </Typography>
-                        <Button onClick={this.onClickLeaveRoom} variant={"outlined"} color={"error"}>Leave room</Button>
+                        {this.showControls()}
+                        <Button sx={{m: 2}} onClick={this.onClickLeaveRoom} variant={"outlined"} color={"error"}>Leave room</Button>
                     </Toolbar>
                 </AppBar>
+
+                <Box sx={{}}>
+
+                </Box>
+
                 <Box>
-                    <Grid container spacing={{ xs: 2, md: 3 }} columns={{ xs: 4, sm: 8, md: 12 }}>
+                    <Grid container spacing={2} alignItems={"center"} textAlign={"center"}>
                         {this.showUsers()}
                     </Grid>
-                    {this.showControls()}
                 </Box>
             </div>
         );

@@ -39,9 +39,9 @@ export default class UserCardComponent extends React.Component {
         return (
             <Grid item>
                 <Paper>
-                    <Box style={this.userBox(true)} sx={{width: 180, height: 50}} >
+                    <Box style={this.userBox(true)} sx={{width: 180, height: 50}} justifyContent={"center"} textAlign={"center"}>
                         <Typography color={this.userBox(false)}>{this.props.player.client.username}</Typography>
-                        <Grid container textAlign={"center"} alignContent={"center"}>
+                        <Grid container textAlign={"center"} alignContent={"center"} justifyContent={"center"}>
                             {this.showLife()}
                         </Grid>
                     </Box>

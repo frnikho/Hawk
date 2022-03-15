@@ -1,13 +1,15 @@
 import React from "react";
 import { SocketContext } from "../context/SocketContext";
 import Container from "@mui/material/Container";
-import {Grid, List, ListItem, ListItemButton, ListItemIcon, ListItemText} from "@mui/material";
+import {Grid, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Typography} from "@mui/material";
 import AnswerCardComponent from "../components/AnswerCardComponent";
 import UserCardComponent from "../components/UserCardComponent";
 import GameStart from "./GameStart";
 import withRouter from "../components/withRouter";
 import {Navigate} from "react-router-dom";
 import Box from "@mui/material/Box";
+import podiumAnimation from '../animations/podium.json';
+import Lottie from "lottie-react";
 
 class Game extends React.Component {
   static contextType = SocketContext;
@@ -134,20 +136,38 @@ class Game extends React.Component {
     showPodium() {
         if (this.state.podium === undefined || this.state.state !== 3)
             return;
+
+        let content;
+        if (this.state.podium.length === 0) {
+            content = (
+                <Box>
+                    <Typography fontSize={26}>
+                        <b>Draw</b>
+                    </Typography>
+                    <Typography fontSize={20}>
+                        no winners !
+                    </Typography>
+                </Box>
+            )
+        } else {
+            content = this.state.podium.map((user) => {
+                    return (
+                        <ListItemButton>
+                            <ListItemText>{user.client.username} - {user.client.life} Remaining</ListItemText>
+                        </ListItemButton>
+                    )
+                })
+        }
+
         return (
             <Box sx={{ width: '100%', maxWidth: 360}}>
+                <Lottie animationData={podiumAnimation} loop={false} autoplay={true}/>
                 <Container>
                     <Grid container spacing={2}>
                         <Grid item md={12} textAlign={"center"}>
                             <List>
                                 <ListItem disablePadding>
-                                    {this.state.podium.map((user) => {
-                                        return (
-                                            <ListItemButton>
-                                                <ListItemText>{user.client.username} - {user.client.life} Remaining</ListItemText>
-                                            </ListItemButton>
-                                        )
-                                    })}
+                                    {content}
                                 </ListItem>
                             </List>
                         </Grid>

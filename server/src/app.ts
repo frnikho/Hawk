@@ -11,7 +11,6 @@ import fs from "fs";
 const cors = require('cors');
 const DEFAULT_PORT = 4001;
 
-
 export default class App {
 
     private port: number;

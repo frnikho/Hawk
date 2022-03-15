@@ -142,11 +142,10 @@ export default class Game {
                 }
                 user.client.getSocket().emit('game:endQuestions', this.questions.getCurrentQuestion()['answer']);
             });
-            //this.checkWin();
         }
     }
 
-    private checkWin() {
+    private checkWin(): boolean {
         let usersLeft: number = 0;
         this.players.map((player) => {
            if (player.life > 0)
@@ -156,32 +155,35 @@ export default class Game {
             this.gameState = GameState.PODIUM;
             clearInterval(this.countdown);
             this.onPodiumState();
+            return true;
         }
+        return false;
     }
 
     private responseState() {
         if (this.countdownTimer === 0) {
-            //TODO CHECK WINNER OR NOT, IF NOT, GET A NEW QUESTIONS
-            this.players.forEach((user) => {
-                user.client.getSocket().emit('game:newQuestion');
-            });
-            this.players.map((user) => user.isAnswered = false);
-            if (this.questions.nextQuestion() === undefined) {
-                console.log("NO NEW QUESTIONS");
-                this.gameState = GameState.PODIUM;
-                clearInterval(this.countdown);
-                this.onPodiumState();
-            } else {
-                this.gameState = GameState.ANSWER_TIME;
+            if (!this.checkWin()) {
+                this.players.forEach((user) => {
+                    user.client.getSocket().emit('game:newQuestion');
+                });
+                this.players.map((user) => user.isAnswered = false);
+                if (this.questions.nextQuestion() === undefined) {
+                    console.log("NO NEW QUESTIONS");
+                    this.gameState = GameState.PODIUM;
+                    clearInterval(this.countdown);
+                    this.onPodiumState();
+                } else {
+                    this.gameState = GameState.ANSWER_TIME;
+                }
+                this.countdownTimer = ANSWER_COUNTDOWN;
             }
-            this.countdownTimer = ANSWER_COUNTDOWN;
         }
     }
 
     private onPodiumState() {
         console.log("END GAME !");
         this.players.forEach((player) => {
-            player.client.getSocket().emit('game:podium', this.players);
+            player.client.getSocket().emit('game:podium', this.players.filter((player) => player.life !== 0));
         });
     }
 }

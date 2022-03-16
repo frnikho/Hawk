@@ -9,7 +9,9 @@ import withRouter from "../components/withRouter";
 import {Navigate} from "react-router-dom";
 import Box from "@mui/material/Box";
 import podiumAnimation from '../animations/podium.json';
+import ParticlesBg from 'particles-bg'
 import Lottie from "lottie-react";
+import Button from "@mui/material/Button";
 
 class Game extends React.Component {
   static contextType = SocketContext;
@@ -150,38 +152,46 @@ class Game extends React.Component {
                 </Box>
             )
         } else {
-            content = this.state.podium.map((user) => {
+            content = this.state.podium.map((user, index) => {
                     return (
-                        <ListItemButton>
-                            <ListItemText>{user.client.username} - {user.client.life} Remaining</ListItemText>
-                        </ListItemButton>
+                        <Box key={index} textAlign={"center"} alignContent={"center"} justifyContent={"center"}>
+                            <Typography fontSize={30}><b>{user.client.username}</b></Typography>
+                            <Grid container textAlign={"center"} alignContent={"center"} justifyContent={"center"}>
+                                {this.showLife(user)}
+                            </Grid>
+                        </Box>
                     )
                 })
         }
 
         return (
-            <Box sx={{ width: '100%', maxWidth: 360}}>
-                <Lottie animationData={podiumAnimation} loop={false} autoplay={true}/>
-                <Container>
-                    <Grid container spacing={2}>
-                        <Grid item md={12} textAlign={"center"}>
-                            <List>
-                                <ListItem disablePadding>
-                                    {content}
-                                </ListItem>
-                            </List>
-                        </Grid>
-                    </Grid>
-                </Container>
+            <Box sx={{m: 'auto'}} textAlign={"center"}>
+                {this.state.redirect === true ? <Navigate to={this.state.redirectUrl}/> : null}
+                <Typography sx={{my: 2}} fontSize={36}><b>Congratulations !</b></Typography>
+                <Box sx={{maxWidth: 450, m: 'auto'}}>
+                    <Lottie animationData={podiumAnimation} loop={false} autoplay={true}/>
+                </Box>
+                {content}
+                <Button sx={{mt: 4}} variant={"contained"} onClick={() => this.setState({redirect: true, redirectUrl: '/'})}>Go home</Button>
             </Box>);
+    }
 
+    showLife(user) {
+        let life = [];
+        for (let i = 0; i < user.life; i++) {
+            life.push(
+                <Grid key={i} item textAlign={"center"}>
+                    ❤
+                </Grid>);
+        }
+        return life;
     }
 
     showApp() {
         return (
             <Container>
-                <Grid container spacing={2}>
-                    <Grid item md={12} textAlign={"center"}>
+                <Grid container spacing={2} justifyContent={"center"} textAlign={"center"} justifyItems={"center"}>
+                    <Grid item textAlign={"center"}>
                         {this.showHeaders()}
                     </Grid>
                 </Grid>
@@ -195,6 +205,7 @@ class Game extends React.Component {
         if (this.state.state === undefined || this.state.state === 0)
             return (
                 <>
+                    <ParticlesBg type="fountain" bg={true} />
                     {this.state.redirect ? <Navigate to={this.state.redirectUrl}/> : null}
                     <GameStart countdown={this.state.countdown}/>
                 </>)

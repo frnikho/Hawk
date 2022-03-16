@@ -30,7 +30,9 @@ export default class GameStart extends React.Component {
                         alignItems: 'center',
                     }}>
                     <Typography component="h1" variant="h3">
-                        {this.state.countdown === undefined ? "Game starting soon..." : `Game will be ready in ${this.state.countdown}`}
+                        <b>
+                            {this.state.countdown === undefined ? "Game starting soon..." : `Game will be ready in ${this.state.countdown}`}
+                        </b>
                     </Typography>
                 </Box>
             </Container>

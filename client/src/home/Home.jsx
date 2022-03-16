@@ -137,7 +137,10 @@ class Home extends React.Component {
                                 <Typography variant="h3" sx={{mt: 4}}>
                                     Play
                                 </Typography>
-                                <Box component="form" sx={{mt: 3, mx: 3, display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
+                                <Box component="form" onSubmit={(event) => {
+                                    event.preventDefault();
+                                    this.onClickCreateRoom();
+                                }} sx={{mt: 3, mx: 3, display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
                                     <TextField autoComplete="given-name" name="firstName" required id="firstName" label="Pseudo" autoFocus variant="standard" onChange={(e) => {
                                         e.preventDefault();
                                         this.setState({username: e.target.value});

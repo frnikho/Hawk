@@ -84,8 +84,6 @@ class Lobby extends React.Component {
 
     startGame = () => {
         let socket = this.context;
-
-        console.log(this.state.room);
         if (this.state.room.users.length > 1) {
             socket.emit('room:game:start', {
                 roomCode: this.props.params.code

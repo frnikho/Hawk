@@ -131,7 +131,7 @@ class Game extends React.Component {
             console.log(this.state.state);
         }
         if (this.state.question.imageUrl !== undefined)
-            data.push(<img style={{maxHeight: 200}} src={"http://localhost:4001/public/" + this.state.question.imageUrl} alt={"Image link"}/>)
+            data.push(<img style={{maxHeight: 200}} src={"https://146.59.236.69:4001/public/" + this.state.question.imageUrl} alt={"Image link"}/>)
         return data;
     }
 

@@ -7,7 +7,7 @@ import https = require('https');
 import * as io from 'socket.io';
 import RoomSocket from "./socket/RoomSocket";
 import RoomManager from "./managers/RoomManager";
-import fs from "fs";
+import * as fs from "fs";
 const cors = require('cors');
 const DEFAULT_PORT = 4001;
 
@@ -85,14 +85,12 @@ export default class App {
         const privateKey = fs.readFileSync('/etc/letsencrypt/live/nikho.dev/privkey.pem', 'utf8');
         const certificate = fs.readFileSync('/etc/letsencrypt/live/nikho.dev/cert.pem', 'utf8');
         const ca = fs.readFileSync('/etc/letsencrypt/live/nikho.dev/chain.pem', 'utf8');
-
         return {
             key: privateKey,
             cert: certificate,
             ca: ca
         };
     }
-
 }
 
 const app: App = new App();

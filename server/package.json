@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "nodemon --watch \"src/**/*\" --ext \"ts,json\" --ignore \"src/**/*.spec.ts\" --exec \"ts-node src/app.ts\"",
+    "build":  "tsc src/app.ts --outDir ./build",
     "test": "jest --forceExit tests"
   },
   "keywords": [],
